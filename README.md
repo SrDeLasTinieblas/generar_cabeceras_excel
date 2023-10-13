@@ -6,7 +6,7 @@ Sirve para generar codigo en .net de las cabeceras que estan en un archivo excel
 Sigue estos pasos para instalar y utilizar este proyecto.
 1. **Clona el Repositorio:**
    ```bash
-   git clone https://github.com/TuUsuario/TuProyecto.git
+   git clone https://github.com/SrDeLasTinieblas/generar_cabeceras_excel.git
    cd TuProyecto
 
 2. **Instala las librerias:**
