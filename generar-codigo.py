@@ -4,7 +4,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment, PatternFill, Color, Border
 
 # Abre el archivo Excel
-archivo_excel = load_workbook('C:\\Users\\SrDeLasTinieblas\\Downloads\\test.xlsx')
+archivo_excel = load_workbook('C:\\Users\\SrDeLasTinieblas\\Downloads\\Plantilla_Asiento.xlsx')
 
 hoja = archivo_excel.active
 
@@ -102,13 +102,6 @@ for fila in hoja.iter_rows():
             # Agrega la celda fusionada al conjunto
             celdas_fusionadas_set.add(hoja.merged_cells)
             
-            # Agrega la celda fusionada al diccionario, agrupándola por letra
-            #if letra in celdas_fusionadas_agrupadas:
-             #   celdas_fusionadas_agrupadas[letra].append(numero)
-            #else:
-             #   celdas_fusionadas_agrupadas[letra] = [numero]
-
-#print(celdas_fusionadas_set)
 # Recorre las celdas de texto
 for celda_texto in celdas_de_texto:
     fila = celda_texto["fila"]
@@ -120,7 +113,7 @@ for celda_texto in celdas_de_texto:
 
 # Recorre las celdas de estilo
 for estilo_celda in celdas_de_estilo:
-    fila = estilo_celda["fila"]
+    fila = 11# estilo_celda["fila"]
     columna = estilo_celda["columna"]
     estilo = estilo_celda["fuente"]
     alineacion = estilo_celda["alineacion"]
@@ -134,7 +127,7 @@ for estilo_celda in celdas_de_estilo:
     codigo_csharp += f'using (ExcelRange r = worksheet.Cells[{fila}, {columna}, {fila}, {columna}])\n'
     codigo_csharp += '{\n'
 
-    codigo_csharp += f'    r.Style.Font.SetFromFont("{estilo["nombre"]}", {tamaño_fuente});\n'
+    codigo_csharp += f'    r.Style.Font.SetFromFont(new Font("{estilo["nombre"]}", {tamaño_fuente}));\n'
 
     # Agrega código para establecer el fondo
     if fondo:
