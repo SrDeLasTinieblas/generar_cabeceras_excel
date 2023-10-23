@@ -2,11 +2,16 @@ import openpyxl
 from openpyxl.styles import Font, Color, PatternFill, Border, Side, Alignment
 from openpyxl.utils import coordinate_to_tuple, get_column_letter
 
-ruta_excel = 'C:\\Users\\SrDeLasTinieblas\\Downloads\\Plantilla_Asiento.xlsx'
+#ruta_excel = 'C:\\Users\\SrDeLasTinieblas\\Downloads\\comprobacion_saldo.xlsx'
+ruta_excel = 'cabecera_planilla.xlsx'
+
 workbook = openpyxl.load_workbook(ruta_excel)
 hoja = workbook.active
 
 codigo_csharp = ""  # Define la variable código C# como una cadena vacía
+
+celdas_no_fusionadas = []
+celdas_fusionadas = []
 
 def obtener_celdas_fusionadas(hoja):
     try:
@@ -19,7 +24,7 @@ def obtener_celdas_fusionadas(hoja):
 
 def obtener_celdas_no_fusionadas(hoja, celda_inicio, celda_fin):
     try:
-        celdas_no_fusionadas = []
+        #celdas_no_fusionadas = []
         fila_inicio, columna_inicio = coordinate_to_tuple(celda_inicio)
         fila_fin, columna_fin = coordinate_to_tuple(celda_fin)
         for fila in hoja.iter_rows(min_row=fila_inicio, max_row=fila_fin, min_col=columna_inicio, max_col=columna_fin):
@@ -43,6 +48,7 @@ def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas):
             codigo_csharp += '{\n'
             codigo_csharp += '    r.Merge = true;\n'
             codigo_csharp += f'    r.Style.Font.SetFromFont("{nombre_fuente}", {tamaño_fuente});\n'
+            #codigo_csharp += f'    r.Style.Font.SetFromFont(new Font("{nombre_fuente}", {tamaño_fuente}));\n'
             codigo_csharp += '    r.Style.Font.Color.SetColor(Color.Black);\n'
             codigo_csharp += '    r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;\n'
             codigo_csharp += '    r.Style.WrapText = true;\n'
@@ -63,6 +69,7 @@ def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas):
             codigo_csharp += f'using (ExcelRange r = worksheet.Cells["{coordenada}"])\n'
             codigo_csharp += '{\n'
             codigo_csharp += f'    r.Style.Font.SetFromFont("{nombre_fuente}", {tamaño_fuente});\n'
+            #codigo_csharp += f'    r.Style.Font.SetFromFont(new Font("{nombre_fuente}", {tamaño_fuente}));\n'
             codigo_csharp += '    r.Style.Font.Color.SetColor(Color.Black);\n'
             codigo_csharp += '    r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;\n'
             codigo_csharp += '    r.Style.WrapText = true;\n'
@@ -81,9 +88,10 @@ def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas):
         print(f"Error al procesar el archivo de Excel: {str(e)}")
         return []
     
-def generar_codigo_csharp_valores(hoja):
+def generar_codigo_csharp_valores(hoja, celdas_fusionadas, celdas_no_fusionadas):
     codigo_csharp = ""  # Define la variable código C# como una cadena vacía
     # Recorre todas las celdas fusionadas
+    print("Recorre todas las celdas fusionadas")
     for celdas_rango in hoja.merged_cells.ranges:
         coord_inicial = celdas_rango.coord.split(':')[0]
 
@@ -96,7 +104,18 @@ def generar_codigo_csharp_valores(hoja):
         #print(valor_celda)
         codigo_csharp += f'worksheet.Cells["{letra_columna}{numero_fila_inicial}"].Value = "{valor_celda}";\n'
 
+    # Recorre todas las celdas No fusionadas
+    for coord_inicial in celdas_no_fusionadas:
+        letra_columna = coord_inicial[0]  # Obtiene la letra de la columna
+        numero_fila_inicial = int(coord_inicial[1:])  # Obtiene el número de la fila inicial
+
+        # Obtiene el valor de la celda no fusionada
+        valor_celda = hoja[coord_inicial].value
+        
+        codigo_csharp += f'worksheet.Cells["{letra_columna}{numero_fila_inicial}"].Value = "{valor_celda}";\n'
+
     return codigo_csharp  # Devuelve el código C# generado
+
 
 def get_column_number(columna):
     num = 0
@@ -105,14 +124,19 @@ def get_column_number(columna):
     return num
 
 celda_inicio = 'A11'
-celda_fin = 'L14'
+celda_fin = 'X13'
 rango_celdas = f'{celda_inicio}:{celda_fin}'
-print(generar_codigo_csharp_valores(hoja))
 celdas_fusionadas = obtener_celdas_fusionadas(hoja)
 celdas_no_fusionadas = obtener_celdas_no_fusionadas(hoja, celda_inicio, celda_fin)
 
+print(generar_codigo_csharp_valores(hoja, celdas_fusionadas, celdas_no_fusionadas))
 
 
 codigo_csharp = generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas)
 
 print(codigo_csharp)
+
+#print(celdas_no_fusionadas)
+#print(celdas_fusionadas)
+
+

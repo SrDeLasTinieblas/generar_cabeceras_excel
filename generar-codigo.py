@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Color, Border
 
 # Abre el archivo Excel
-archivo_excel = load_workbook('C:\\Users\\SrDeLasTinieblas\\Downloads\\Plantilla_Asiento.xlsx')
+archivo_excel = load_workbook('C:\\Users\\SrDeLasTinieblas\\Downloads\\comprobacion_saldo.xlsx')
 
 hoja = archivo_excel.active
 
