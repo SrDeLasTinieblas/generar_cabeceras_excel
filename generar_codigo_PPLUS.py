@@ -3,7 +3,7 @@ from openpyxl.styles import Font, Color, PatternFill, Border, Side, Alignment
 from openpyxl.utils import coordinate_to_tuple, get_column_letter
 import pyperclip as clipboard
 
-ruta_excel = 'C:\\Users\\SrDeLasTinieblas\\Downloads\\LibRegCompra.xlsx'
+ruta_excel = 'D:\\Python\\excel - tools\\plantillas\\APF-NET.xlsx'
 
 workbook = openpyxl.load_workbook(ruta_excel)
 hoja = workbook.active
@@ -12,7 +12,6 @@ codigo_csharp = ""  # Define la variable código C# como una cadena vacía
 
 celdas_no_fusionadas = []
 celdas_fusionadas = []
-
 
 celdas_no_fusionadas = []
 celdas_fusionadas = []
@@ -68,10 +67,10 @@ def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas, filas_f
             numero_fila = int(''.join(filter(str.isdigit, inicio)))
 
             codigo_csharp += f'using (ExcelRange r = worksheet.Cells["{rango}"])\n'
-            codigo_csharp += '{{\n'
+            codigo_csharp += '{\n'
             codigo_csharp += '    r.Merge = true;\n'
-            codigo_csharp += f'    worksheet.Row({numero_fila}).Height = {hoja.row_dimensions[hoja[inicio].row].height};\n'
-            codigo_csharp += f'    worksheet.Column({get_column_number(letra_columna)}).Width = {hoja.column_dimensions[letra_columna].width};\n'
+            #codigo_csharp += f'    worksheet.Row({numero_fila}).Height = {hoja.row_dimensions[hoja[inicio].row].height};\n'
+            ##codigo_csharp += f'    worksheet.Column({get_column_number(letra_columna)}).Width = {hoja.column_dimensions[letra_columna].width};\n'
             codigo_csharp += f'    r.Style.Font.SetFromFont(new Font("{nombre_fuente}", {tamaño_fuente}));\n'
             codigo_csharp += '    r.Style.Font.Color.SetColor(Color.Black);\n'
             codigo_csharp += '    r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;\n'
@@ -81,7 +80,7 @@ def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas, filas_f
             codigo_csharp += '    r.Style.Border.Left.Style = ExcelBorderStyle.Thin;\n'
             codigo_csharp += '    r.Style.Border.Right.Style = ExcelBorderStyle.Thin;\n'
             codigo_csharp += '    r.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;\n'
-            codigo_csharp += '}}\n'
+            codigo_csharp += '}\n'
 
         for coordenada in celdas_no_fusionadas:
             estilo_celda = hoja[coordenada].font
@@ -90,9 +89,9 @@ def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas, filas_f
             letra_columna = coordenada[0]  # Obtén la letra de la columna directamente
             numero_fila = int(''.join(filter(str.isdigit, coordenada)))  # Extrae los números de la coordenada
             codigo_csharp += f'using (ExcelRange r = worksheet.Cells["{coordenada}"])\n'
-            codigo_csharp += '{{\n'
-            codigo_csharp += f'    worksheet.Row({numero_fila}).Height = {hoja.row_dimensions[numero_fila].height};\n'
-            codigo_csharp += f'    worksheet.Column({(get_column_number(quitar_numeros(coordenada)))}).Width = {hoja.column_dimensions[letra_columna].width};\n'
+            codigo_csharp += '{\n'
+            #codigo_csharp += f'    worksheet.Row({numero_fila}).Height = {hoja.row_dimensions[numero_fila].height};\n'
+            #codigo_csharp += f'    worksheet.Column({(get_column_number(quitar_numeros(coordenada)))}).Width = {hoja.column_dimensions[letra_columna].width};\n'
             codigo_csharp += f'    r.Style.Font.SetFromFont(new Font("{nombre_fuente}", {tamaño_fuente}));\n'
             codigo_csharp += '    r.Style.Font.Color.SetColor(Color.Black);\n'
             codigo_csharp += '    r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;\n'
@@ -102,7 +101,7 @@ def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas, filas_f
             codigo_csharp += '    r.Style.Border.Left.Style = ExcelBorderStyle.Thin;\n'
             codigo_csharp += '    r.Style.Border.Right.Style = ExcelBorderStyle.Thin;\n'
             codigo_csharp += '    r.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;\n'
-            codigo_csharp += '}}\n'
+            codigo_csharp += '}\n'
 
         for fila_fusionada in filas_fusionadas:
             # Asegúrate de que la fila_fusionada tiene el formato adecuado (por ejemplo, "1:3")
@@ -157,8 +156,8 @@ def get_column_number(columna):
 def quitar_numeros(cadena):
     return ''.join(caracter for caracter in cadena if not caracter.isdigit())
 
-celda_inicio = 'A7'
-celda_fin = 'AB13'
+celda_inicio = 'A1'
+celda_fin = 'Q3'
 rango_celdas = f'{celda_inicio}:{celda_fin}'
 celdas_fusionadas = obtener_celdas_fusionadas(hoja)
 celdas_no_fusionadas = obtener_celdas_no_fusionadas(hoja, celda_inicio, celda_fin)
