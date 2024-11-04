@@ -3,7 +3,7 @@ from openpyxl.styles import Font, Color, PatternFill, Border, Side, Alignment
 from openpyxl.utils import coordinate_to_tuple, get_column_letter
 import pyperclip as clipboard
 
-ruta_excel = 'D:\\Python\\excel - tools\\plantillas\\APF-NET.xlsx'
+ruta_excel = 'D:\\Python\\generar_cabeceras_excel\\plantillas\\LibTribInvPermUniFisica.xlsx'
 
 workbook = openpyxl.load_workbook(ruta_excel)
 hoja = workbook.active
@@ -156,8 +156,8 @@ def get_column_number(columna):
 def quitar_numeros(cadena):
     return ''.join(caracter for caracter in cadena if not caracter.isdigit())
 
-celda_inicio = 'A1'
-celda_fin = 'Q3'
+celda_inicio = 'A11'
+celda_fin = 'I11'
 rango_celdas = f'{celda_inicio}:{celda_fin}'
 celdas_fusionadas = obtener_celdas_fusionadas(hoja)
 celdas_no_fusionadas = obtener_celdas_no_fusionadas(hoja, celda_inicio, celda_fin)
