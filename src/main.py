@@ -156,8 +156,8 @@ def get_column_number(columna):
 def quitar_numeros(cadena):
     return ''.join(caracter for caracter in cadena if not caracter.isdigit())
 
-celda_inicio = 'A11'
-celda_fin = 'I11'
+celda_inicio = 'A13'
+celda_fin = 'I14'
 rango_celdas = f'{celda_inicio}:{celda_fin}'
 celdas_fusionadas = obtener_celdas_fusionadas(hoja)
 celdas_no_fusionadas = obtener_celdas_no_fusionadas(hoja, celda_inicio, celda_fin)
