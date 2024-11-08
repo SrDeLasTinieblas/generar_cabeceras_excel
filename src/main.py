@@ -5,7 +5,7 @@ import pyperclip as clipboard
 
 def abrir_archivo_excel(ruta=None):
     if not ruta:
-        ruta = input("Ingrese la ruta del archivo Excel (ejemplo: D:\...\LibTribInvPermValorizado.xlsx ): ")
+        ruta = input("Ingrese la ruta del archivo Excel (ejemplo: D:\\...\\LibTribInvPermValorizado.xlsx ): ")
     return openpyxl.load_workbook(ruta)
 
 def obtener_rango_celdas(hoja):
