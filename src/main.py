@@ -1,14 +1,29 @@
-import openpyxl
+import openpyxl, os
 from openpyxl.styles import Font, Color, PatternFill, Border, Side, Alignment
 from openpyxl.utils import coordinate_to_tuple, get_column_letter
 import pyperclip as clipboard
 
-def abrir_archivo_excel(ruta=None):
-    if not ruta:
-        ruta = input("Ingrese la ruta del archivo Excel (ejemplo: D:\\...\\LibTribInvPermValorizado.xlsx ): ")
-    return openpyxl.load_workbook(ruta)
+def abrir_archivo_excel():
+    ruta_base = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'plantillas'))
+    
+    nombre_archivo = input("Ingrese el nombre del archivo Excel (ejemplo: archivo.xlsx): ").strip()
+    ruta_completa = os.path.join(ruta_base, nombre_archivo)
+    
+    # print(f"Buscando archivo en: {ruta_completa}")
+    
+    if not os.path.exists(ruta_completa):
+        print(f"Archivo no encontrado en la ruta: {ruta_completa}")
+        return None
+
+    try:
+        return openpyxl.load_workbook(ruta_completa)
+    except Exception as e:
+        print(f"Error al abrir el archivo: {e}")
+        return None
+
 
 def obtener_rango_celdas(hoja):
+    celda_inicio = 'A13'
     celda_inicio = input("Ingrese la celda de inicio (ejemplo: A13): ")
     celda_fin = input("Ingrese la celda de fin (ejemplo: I14): ")
     return celda_inicio, celda_fin
@@ -48,18 +63,26 @@ def obtener_filas_fusionadas(hoja, celda_inicio, celda_fin):
         print(f"Error al obtener filas fusionadas: {str(e)}")
         return []
 
+
 def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas, filas_fusionadas):
     codigo_csharp = ""
     try:
+        # Definir el relleno para las cabeceras
+        cabecera_fill = PatternFill(start_color="B5E6A2", end_color="B5E6A2", fill_type="solid")
+        
         # Generar código para celdas fusionadas
         for rango in celdas_fusionadas:
             inicio, fin = rango.split(":")
             estilo_primera_celda = hoja[inicio].font
             nombre_fuente = estilo_primera_celda.name
             tamaño_fuente = int(estilo_primera_celda.size)
+
+            # Aplicar formato y color
+            hoja[inicio].fill = cabecera_fill
+
             codigo_csharp += f'using (ExcelRange r = worksheet.Cells["{rango}"])\n{{\n'
             codigo_csharp += '    r.Merge = true;\n'
-            codigo_csharp += f'    r.Style.Font.SetFromFont(new Font("{nombre_fuente}", {tamaño_fuente}));\n'
+            codigo_csharp += f'    r.Style.Font.SetFromFont(new Font("{nombre_fuente}", {tamaño_fuente}, FontStyle.Regular));\n'
             codigo_csharp += '    r.Style.Font.Color.SetColor(Color.Black);\n'
             codigo_csharp += '    r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;\n'
             codigo_csharp += '    r.Style.WrapText = true;\n'
@@ -67,13 +90,19 @@ def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas, filas_f
             codigo_csharp += '    r.Style.Border.Top.Style = ExcelBorderStyle.Thin;\n'
             codigo_csharp += '    r.Style.Border.Left.Style = ExcelBorderStyle.Thin;\n'
             codigo_csharp += '    r.Style.Border.Right.Style = ExcelBorderStyle.Thin;\n'
-            codigo_csharp += '    r.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;\n}\n'
+            codigo_csharp += '    r.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;\n'
+            codigo_csharp += '    r.Style.Fill.PatternType = ExcelFillStyle.Solid;\n'
+            codigo_csharp += '    r.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#B5E6A2"));}\n'
 
         # Generar código para celdas no fusionadas
         for coordenada in celdas_no_fusionadas:
             estilo_celda = hoja[coordenada].font
             nombre_fuente = estilo_celda.name
             tamaño_fuente = int(estilo_celda.size)
+
+            # Aplicar formato y color
+            hoja[coordenada].fill = cabecera_fill
+
             codigo_csharp += f'using (ExcelRange r = worksheet.Cells["{coordenada}"])\n{{\n'
             codigo_csharp += f'    r.Style.Font.SetFromFont(new Font("{nombre_fuente}", {tamaño_fuente}));\n'
             codigo_csharp += '    r.Style.Font.Color.SetColor(Color.Black);\n'
@@ -83,7 +112,9 @@ def generar_codigo_csharp(hoja, celdas_fusionadas, celdas_no_fusionadas, filas_f
             codigo_csharp += '    r.Style.Border.Top.Style = ExcelBorderStyle.Thin;\n'
             codigo_csharp += '    r.Style.Border.Left.Style = ExcelBorderStyle.Thin;\n'
             codigo_csharp += '    r.Style.Border.Right.Style = ExcelBorderStyle.Thin;\n'
-            codigo_csharp += '    r.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;\n}\n'
+            codigo_csharp += '    r.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;\n'
+            codigo_csharp += '    r.Style.Fill.PatternType = ExcelFillStyle.Solid;\n'
+            codigo_csharp += '    r.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#B5E6A2"));}\n'
 
         return codigo_csharp
     except Exception as e:
